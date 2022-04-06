@@ -1,4 +1,6 @@
 import Dependencies._
+import sbt.Keys.publishMavenStyle
+import ReleaseTransformations._
 
 ThisBuild / scalaVersion     := "2.13.8"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
@@ -22,14 +24,29 @@ developers := List(
 ThisBuild / description := "A library for presigning S3 and Cloudfront URLS"
 ThisBuild / licenses := List("MIT" -> new URL("https://choosealicense.com/licenses/mit/"))
 ThisBuild / homepage := Some(url("https://github.com/MancunianSam/aws-presigned-scala"))
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
-publishTo := sonatypePublishToBundle.value
-publishMavenStyle := true
-
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  // For non cross-build projects, use releaseStepCommand("publishSigned")
+  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
 
 lazy val root = (project in file("."))
   .settings(
     name := "aws-presigned-scala",
+    publishTo := sonatypePublishToBundle.value,
+    publishMavenStyle := true,
     libraryDependencies ++= Seq(
       cats,
       circe,
