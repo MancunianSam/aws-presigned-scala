@@ -23,6 +23,9 @@ ThisBuild / description := "A library for presigning S3 and Cloudfront URLS"
 ThisBuild / licenses := List("MIT" -> new URL("https://choosealicense.com/licenses/mit/"))
 ThisBuild / homepage := Some(url("https://github.com/MancunianSam/aws-presigned-scala"))
 
+publishTo := sonatypePublishToBundle.value
+publishMavenStyle := true
+
 
 lazy val root = (project in file("."))
   .settings(
