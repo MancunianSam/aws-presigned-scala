@@ -49,8 +49,8 @@ lazy val root = (project in file("."))
     publishMavenStyle := true,
     libraryDependencies ++= Seq(
       cats,
+      catsEffect,
       circe,
-      ciris,
       circeGeneric,
       cloudfront,
       s3,

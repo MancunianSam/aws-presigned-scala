@@ -8,15 +8,11 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.net.URL
 import java.time.Duration
 
+trait S3[F[_]] {
+  def getPresignedUploadUrl(bucket: String, key: String, duration: Duration): F[URL]
+}
 object S3 {
-  /**
-   * @param bucket An S3 bucket
-   * @param key The object key
-   * @tparam F[_]
-   * @return F[URL]
-   * @example val url = getPresignedUploadUrl[IO]("bucket", "key")
-   */
-  def getPresignedUploadUrl[F[_] : Applicative](bucket: String, key: String, duration: Duration): F[URL] = {
+  def apply[F[_] : Applicative](): S3[F] = (bucket: String, key: String, duration: Duration) => {
     val putObjectRequest = PutObjectRequest.builder()
       .bucket(bucket)
       .key(key)
@@ -27,6 +23,4 @@ object S3 {
       .build
     Applicative[F].pure(S3Presigner.create().presignPutObject(request).url())
   }
-
 }
-
